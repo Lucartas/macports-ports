@@ -1,0 +1,24 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           npm 1.0
+
+npm.nodejs_version  26
+npm.version         11
+
+name                markdownlint-cli
+version             0.45.0
+revision            0
+
+categories          devel
+license             MIT
+maintainers         openmaintainer
+
+description         Command Line Interface for MarkdownLint
+long_description    Command Line Interface for MarkdownLint
+
+homepage            https://github.com/igorshubovych/markdownlint-cli
+
+checksums           rmd160  b082ddf50cdee8c8fa831f526b128952806f434b \
+                    sha256  8ce123a96b7a7f04f4dc684e9423f698fbf715c8f1fd17f2a2e1ce03f34d2a4e \
+                    size    8686
