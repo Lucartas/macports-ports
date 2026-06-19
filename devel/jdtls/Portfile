@@ -1,0 +1,70 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+
+PortSystem          1.0
+PortGroup           java 1.0
+PortGroup           python 1.0
+
+name                jdtls
+version             1.57.0
+set buildstamp      202602261110
+revision            0
+
+categories          java devel
+license             EPL-2.0
+maintainers         nomaintainer
+
+description         Eclipse JDT Language Server
+long_description    ${description} is a Java language server implementing \
+                    the Language Server Protocol for Java.
+
+homepage            https://github.com/eclipse-jdtls/eclipse.jdt.ls
+platforms           darwin
+supported_archs     noarch
+
+master_sites        https://download.eclipse.org/jdtls/milestones/${version}/
+distname            jdt-language-server-${version}-${buildstamp}
+extract.suffix      .tar.gz
+
+checksums           rmd160  de582f22e641c9ba4ad77db3dd8affba6bc13929 \
+                    sha256  f7ffa93fe1bbbea95dac13dd97cdcd25c582d6e56db67258da0dcceb2302601e \
+                    size    51366168
+
+java.version        21+
+java.fallback       openjdk21
+
+python.default_version 314
+depends_run-append  port:python${python.version}
+
+use_configure       no
+build               {}
+
+# The tarball contents are copied directly from the work area.
+worksrcdir          .
+
+destroot {
+    xinstall -d ${destroot}${prefix}/share/java/${name}
+
+    foreach src [glob -directory ${worksrcpath} -nocomplain * .*] {
+        set base [file tail $src]
+        if {$base eq "." || $base eq ".." || $base eq "destroot"} {
+            continue
+        }
+        copy $src ${destroot}${prefix}/share/java/${name}
+    }
+
+    xinstall -d ${destroot}${prefix}/bin
+    ln -s ${prefix}/share/java/${name}/bin/jdtls \
+        ${destroot}${prefix}/bin/jdtls
+}
+
+test.run            no
+
+notes "
+jdtls requires Java ${java.version} at runtime.
+
+Typical usage:
+  jdtls -configuration ~/.cache/jdtls -data ~/Library/Application\\ Support/jdtls/workspace
+
+Use a writable per-user -configuration directory; do not write into the
+installed config_* tree.
+"
