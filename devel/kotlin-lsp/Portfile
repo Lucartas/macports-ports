@@ -1,0 +1,78 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+
+name                kotlin-lsp
+version             262.2310.0
+revision            0
+
+categories          devel
+license             Apache-2
+maintainers         nomaintainer
+
+description         Official Kotlin language server from JetBrains
+long_description    Official Kotlin language server from JetBrains, \
+                    packaged from the standalone macOS distribution for \
+                    use with editors supporting the Language Server Protocol.
+
+homepage            https://github.com/Kotlin/kotlin-lsp
+
+supported_archs     x86_64
+universal_variant   no
+
+master_sites        https://download-cdn.jetbrains.com/kotlin-lsp/${version}/
+distname            kotlin-lsp-${version}-mac-x64
+
+use_zip             yes
+extract.mkdir       yes
+
+depends_extract     port:unzip
+
+checksums           rmd160  88da4221e7ae63df43ef00df97d21e212a5c6fa6 \
+                    sha256  a4ccf591664cfef6a12f21a690d23bad26b92de62ed34674491b915f25f95bf5 \
+                    size    402452407
+
+use_configure       no
+build               {}
+
+post-extract {
+    # Upstream launcher tries to chmod the bundled java binary at runtime.
+    # That fails after installation because ${prefix} is not writable by users.
+    reinplace {/^    chmod \+x "\$LOCAL_JRE_PATH\/bin\/java"$/d} \
+        ${worksrcpath}/kotlin-lsp.sh
+}
+
+destroot {
+    set appdir ${destroot}${prefix}/share/${name}
+
+    xinstall -d ${appdir}
+
+    foreach f [glob -directory ${worksrcpath} *] {
+        copy $f ${appdir}/
+    }
+
+    # Make the launcher executable.
+    file attributes ${appdir}/kotlin-lsp.sh -permissions 0755
+
+    # Make bundled JRE executables runnable at install time.
+    if {[file isdirectory ${appdir}/jre/Contents/Home/bin]} {
+        foreach f [glob -nocomplain ${appdir}/jre/Contents/Home/bin/*] {
+            file attributes $f -permissions 0755
+        }
+    } elseif {[file isdirectory ${appdir}/jre/bin]} {
+        foreach f [glob -nocomplain ${appdir}/jre/bin/*] {
+            file attributes $f -permissions 0755
+        }
+    }
+
+    xinstall -d ${destroot}${prefix}/bin
+    set launcher [open ${workpath}/${name} w 0755]
+    puts ${launcher} "#!/bin/sh"
+    puts ${launcher} "exec ${prefix}/share/${name}/kotlin-lsp.sh \"\$@\""
+    close ${launcher}
+    xinstall -m 0755 ${workpath}/${name} ${destroot}${prefix}/bin/${name}
+}
+
+livecheck.type      regex
+livecheck.url       ${homepage}/releases
+livecheck.regex     {releases/tag/v([0-9.]+)}
