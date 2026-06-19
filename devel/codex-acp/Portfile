@@ -1,0 +1,39 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+# TODO; working port but should do the MacPorts way by vendoring the dependencies
+PortSystem          1.0
+PortGroup           github 1.0
+PortGroup           cargo 1.0
+
+github.setup        zed-industries codex-acp 0.11.1 v
+github.tarball_from archive
+revision            0
+
+categories          devel
+license             Apache-2.0
+maintainers         nomaintainer
+
+description         Use Codex from ACP-compatible clients such as Zed
+long_description    Use Codex from ACP-compatible clients such as Zed.
+
+checksums           rmd160  a839d8eb2634d59b816e9ac748960ed63318682a \
+                    sha256  21b7ffed68e817df638c8e939c376e0ccd2f6f91b420730b71d3ba418c3b1205 \
+                    size    118233
+
+depends_build-append \
+                    port:pkgconfig
+
+depends_lib-append  port:openssl3
+
+# FIXME: override build flags to erase --frozen added by the Cargo PortGroup
+build.cmd       /opt/local/bin/cargo
+build.target
+build.pre_args
+build.args      build --release
+
+destroot {
+    xinstall -d ${destroot}${prefix}/bin
+    xinstall -m 0755 \
+        ${worksrcpath}/target/x86_64-apple-darwin/release/codex-acp \
+        ${destroot}${prefix}/bin/codex-acp
+}
