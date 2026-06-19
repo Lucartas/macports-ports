@@ -1,0 +1,49 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+
+PortSystem          1.0
+
+PortGroup           github 1.0
+PortGroup           cargo 1.0
+
+github.setup        rtk-ai rtk 0.42.4 v
+github.tarball_from archive
+revision            0
+
+categories          sysutils devel
+platforms           darwin
+license             Apache-2
+maintainers         nomaintainer
+
+description         CLI proxy that reduces LLM token consumption
+long_description    rtk is a Rust-based CLI proxy that filters and compresses \
+                    command output before it reaches an LLM context.
+
+homepage            https://github.com/rtk-ai/rtk
+
+checksums           sha256  59c3864751715913c040732d216bf07114fb803158ebff8fe44ad7b23c3f5fc2 \
+                    rmd160  378606ba4936095c8742c767b3a34d5d2804cc9e \
+                    size    850682
+
+depends_build-append \
+                    port:rust \
+                    port:cargo
+
+use_configure       no
+
+# FIXME: override build flags to erase --frozen added by the Cargo PortGroup
+build.cmd       /opt/local/bin/cargo
+build.target
+build.pre_args
+build.args      build --release --locked
+
+destroot {
+    xinstall -d ${destroot}${prefix}/bin
+    xinstall -m 0755 ${worksrcpath}/target/x86_64-apple-darwin/release/rtk \
+        ${destroot}${prefix}/bin/rtk
+}
+
+test.run            yes
+test.cmd            ${destroot}${prefix}/bin/rtk
+test.args           --version
+
+livecheck.type      github
