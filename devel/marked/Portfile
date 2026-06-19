@@ -1,0 +1,24 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           npm 1.0
+
+npm.nodejs_version  26
+npm.version         11
+
+name                marked
+version             14.1.2
+revision            0
+
+categories          devel
+license             MIT
+maintainers         openmaintainer
+
+description         A markdown parser built for speed
+long_description    A markdown parser built for speed
+
+homepage            https://marked.js.org
+
+checksums           rmd160  64efc1548332338f497ccdb09586370251765a21 \
+                    sha256  a338f1e45653eab3ae97630f9395925a296d6c1467b0743af6b312528dcbbaa9 \
+                    size    174044
