@@ -5,7 +5,7 @@ PortSystem          1.0
 PortGroup           github 1.0
 PortGroup           cargo 1.0
 
-github.setup        rtk-ai rtk 0.42.4 v
+github.setup        rtk-ai rtk 0.43.0 v
 github.tarball_from archive
 revision            0
 
@@ -20,9 +20,9 @@ long_description    rtk is a Rust-based CLI proxy that filters and compresses \
 
 homepage            https://github.com/rtk-ai/rtk
 
-checksums           sha256  59c3864751715913c040732d216bf07114fb803158ebff8fe44ad7b23c3f5fc2 \
-                    rmd160  378606ba4936095c8742c767b3a34d5d2804cc9e \
-                    size    850682
+checksums           sha256  196bec9e9b438f0b8cd0198f68e05f072ccdfdec2c2655a3562d6ea357fa485b \
+                    rmd160  c68a188e04a7292b478527b585d309c64bb34b68 \
+                    size    876208
 
 depends_build-append \
                     port:rust \
