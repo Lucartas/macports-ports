@@ -1,0 +1,28 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           npm 1.0
+
+npm.nodejs_version  26
+npm.version         11
+
+npm.rootname        @mermaid-js/mermaid-cli
+
+name                mermaid-cli
+version             11.16.0
+revision            0
+distname            ${name}-${version}
+
+categories          graphics
+license             MIT
+maintainers         nomaintainer
+
+description         Command-line interface for Mermaid
+long_description    Mermaid CLI takes a Mermaid definition file as input and \
+                    generates an SVG, PNG, or PDF file as output.
+
+homepage            https://github.com/mermaid-js/mermaid-cli
+
+checksums           rmd160  625d9b45e86152ba46710ea8c6cc37d54ae3a128 \
+                    sha256  65d795191bf9ca6ca90a40a1ea30354a6a491e206674cafd4d9de62fe9075439 \
+                    size    16512
