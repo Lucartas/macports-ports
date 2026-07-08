@@ -22,7 +22,6 @@ long_description    \
     diagnostics, and more. In addition to regular Markdown, it also supports \
     wiki-link-style references that enable Zettelkasten-like1, 2 note taking.
 
-dist_subdir         ${name}/${version}
 distfiles           marksman-macos
 checksums           rmd160  993cc2c247df155ccb496f7d850f3c4bf7cc1811 \
                     sha256  6a801c17b5ac0dba69787c5282b3b3bd416e66c96253fae098d311c6bbd1833b \
