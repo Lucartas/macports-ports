@@ -23,9 +23,10 @@ long_description    \
     wiki-link-style references that enable Zettelkasten-like1, 2 note taking.
 
 distfiles           marksman-macos
-checksums           rmd160  993cc2c247df155ccb496f7d850f3c4bf7cc1811 \
-                    sha256  6a801c17b5ac0dba69787c5282b3b3bd416e66c96253fae098d311c6bbd1833b \
-                    size    43856208
+
+checksums           rmd160  7cb2d1d760ffa10a0c36e41bd255f625b11cc508 \
+                    sha256  ff006163615312703431584b7f32af4eb6ae2537e907ed2ca93c50d489cb8373 \
+                    size    41041472
 
 if {${os.major} < 10 && ${os.platform} eq "darwin"} {
     known_fail yes
