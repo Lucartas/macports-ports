@@ -12,7 +12,7 @@ npm.version         11
 npm.rootname        @openai/codex
 
 name                openai-codex
-version             0.143.0
+version             0.144.1
 revision            0
 distname            codex-${version}
 
@@ -25,6 +25,6 @@ long_description    Codex CLI is a coding agent from OpenAI that runs locally on
 
 homepage            https://github.com/openai/codex 
 
-checksums           rmd160  92a1cb31dc336ff58bc563549adbcb975ec85248 \
-                    sha256  d8763cc089e94e2612cb34f947582735dbcbe6e983468cf86beb1a8c5847d84c \
-                    size    3889
+checksums           rmd160  21fe1a4488bcbc0b21adef9316cd3335d5b5beaa \
+                    sha256  5490b3973605d5f6d9d11680e01513c66732d4bb268f8114055b73c64f91c098 \
+                    size    4313
