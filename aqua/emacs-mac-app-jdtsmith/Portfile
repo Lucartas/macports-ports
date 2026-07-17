@@ -4,9 +4,19 @@ PortSystem          1.0
 PortGroup           github 1.0
 
 set emacs_version   30.2
-set emacs_mac_ver   d53fc0e50022d80e8080561c3792398bc5be8509
+set main_commit     189247cbd6c5023163300db8a1678586ccbf973b
+set arena_commit    6fb930da579b84992d886941af6fc23f8bfa8420
 
-github.setup        jdtsmith emacs-mac ${emacs_mac_ver} 
+variant arena_draw conflicts metal \
+    description {Build the experimental arena drawing pipeline} {}
+
+if {[variant_isset arena_draw]} {
+    set emacs_mac_ver ${arena_commit}
+} else {
+    set emacs_mac_ver ${main_commit}
+}
+
+github.setup        jdtsmith emacs-mac ${emacs_mac_ver}
 
 name                emacs-mac-app-jdtsmith
 conflicts           emacs-app emacs-app-devel emacs-mac-app emacs-mac-app-devel
@@ -23,9 +33,15 @@ long_description    ${name} is the \"Mac port\" of GNU Emacs ${emacs_version}. \
 platforms           {darwin >= 14}
 license             GPL-3+
 
-checksums           rmd160  860e02b0a3563083be875b05548917a908a9a335 \
-                    sha256  53c051109e4d3a78928fbcbb840103aa4c216cdb056ea1b3e62f8c3fd9b85d4d \
-                    size    53340606
+if {[variant_isset arena_draw]} {
+    checksums       rmd160  9688fd10c7299c48b082a0c59ff915248b429b48 \
+                    sha256  330e775beb8e0b4e54f607ed369d6041067f039cc8167ec12fe9d44ce95f9104 \
+                    size    53354746
+} else {
+    checksums       rmd160  7958dc0cceb314c0c250664ae3e7d7e9af3b4c1e \
+                    sha256  18246a00402723e25a3334805e00f531cc722aac21a18698991b1388154796e3 \
+                    size    53346371
+}
 
 depends_lib         port:ncurses \
                     port:libxml2 \
@@ -78,6 +94,10 @@ configure.args      --disable-silent-rules \
                     --with-modules \
                     --with-sqlite3 \
                     --with-webp
+
+if {[variant_isset arena_draw]} {
+    configure.args-append --enable-mac-display-link
+}
 
 platform darwin {
     configure.cflags-append -fobjc-arc
@@ -168,7 +188,7 @@ etc/NEWS or the Emacs Lisp reference manual.
 "
 }
 
-variant metal description {Enable experimental Metal support} {
+variant metal conflicts arena_draw description {Enable experimental Metal support} {
     configure.args-append  --with-mac-metal
 }
 
