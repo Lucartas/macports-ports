@@ -50,7 +50,8 @@ depends_lib         port:ncurses \
                     port:gmp \
                     port:jansson
 
-patchfiles          patch-src_emacs.c.diff
+patchfiles          patch-src_emacs.c.diff \
+                    patch-tree-sitter-0.26.diff
 
 post-patch {
     reinplace "s|__PREFIX__|${prefix}|" ${worksrcpath}/src/emacs.c
