@@ -27,9 +27,11 @@ patchfiles-append       patch-no-bundled-syncthing.diff \
 
 post-patch {
     reinplace "s|__PREFIX__|${prefix}|" ${worksrcpath}/syncthing/STApplication.m
+    reinplace {s|xcodebuild -workspace|xcodebuild -IDEPackageSupportDisableManifestSandbox=1 -IDEPackageSupportDisablePluginExecutionSandbox=1 -workspace|} ${worksrcpath}/Makefile
 }
 
 use_configure           no
+build.type              xcode
 use_xcode               yes
 
 build {
