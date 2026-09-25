@@ -1,0 +1,19 @@
+--- Sources/NSValueTransformerName.h.orig
++++ Sources/NSValueTransformerName.h
+@@ -23 +23 @@
+-@import Darwin.Availability;
++#include <Availability.h>
+--- Sources/NSValueTransformer+TransformerKit.m.orig
++++ Sources/NSValueTransformer+TransformerKit.m
+@@ -25,2 +25,2 @@
+-@import Darwin.Availability;
+-@import ObjectiveC.runtime;
++#include <Availability.h>
++#import <objc/runtime.h>
+--- Sources/TTTDateTransformers.m.orig
++++ Sources/TTTDateTransformers.m
+@@ -27,2 +27,2 @@
+-@import Darwin.C.time;
+-@import Darwin.C.xlocale;
++#include <time.h>
++#include <xlocale.h>

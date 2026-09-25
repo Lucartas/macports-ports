@@ -1,0 +1,13 @@
+--- KissXML/Private/DDXMLPrivate.h.orig
++++ KissXML/Private/DDXMLPrivate.h
+@@ -2 +2 @@
+-#import <libxml/tree.h>
++#import <libxml/parser.h>
+--- KissXML/DDXMLNode.m.orig
++++ KissXML/DDXMLNode.m
+@@ -32 +32 @@
+-static void MyErrorHandler(void * userData, xmlErrorPtr error);
++static void MyErrorHandler(void * userData, const xmlError *error);
+@@ -1968 +1968 @@
+-static void MyErrorHandler(void * userData, xmlErrorPtr error)
++static void MyErrorHandler(void * userData, const xmlError *error)
