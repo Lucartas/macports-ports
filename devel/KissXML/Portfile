@@ -5,7 +5,7 @@ PortGroup               xcode 1.0
 PortGroup               github 1.0
 
 github.setup            robbiehanson KissXML 5.3.3
-revision                1
+revision                2
 github.tarball_from     archive
 categories              devel
 license                 BSD
@@ -17,6 +17,8 @@ long_description        ${name} provides a drop-in replacement for Apple's NSXML
 homepage                https://github.com/robbiehanson/${name}
 
 depends_lib             port:libxml2
+
+patchfiles              patch-current-libxml2.diff
 
 xcode.scheme            {KissXML (macOS)}
 xcode.target            {KissXML (macOS)}
