@@ -4,10 +4,10 @@ PortSystem          1.0
 PortGroup           xcode 1.0
 PortGroup           github 1.0
 
-github.setup        MacPass MacPass 0.8.1
+github.setup        MacPass MacPass 0.8.2
 # Change github.tarball_from to 'releases' or 'archive' next update
 github.tarball_from tarball
-revision            1
+revision            0
 categories          security
 license             GPL-3
 maintainers         {i0ntempest @i0ntempest} openmaintainer
@@ -16,7 +16,7 @@ long_description    ${name} is a native macOS port of KeePass. Key features are 
                     form filling and regex matching of window titles to detect the correct target application. \
                     Through the plugin MacPassHTTP, ${name} can also be used together with \
                     keepass browser extensions to integrate ${name} as a password database the browser can use.
-homepage            https://macpassapp.org/
+homepage            https://macpass.app/
 
 master_sites        ${github.homepage}/archive:macpass \
                     https://github.com/mstarke/DDHotKey/archive:ddhotkey
@@ -26,9 +26,9 @@ distfiles           ${version}.tar.gz:macpass \
                     ${ddhotkey_hash}.tar.gz:ddhotkey
 
 checksums           ${version}.tar.gz \
-                    rmd160  07cd17c6c37bedd27879d6ad928778fc85b6499d \
-                    sha256  41d66936aa48c5c17676a167b28275f1fb98b8110422055fd282f176d046e910 \
-                    size    11046597 \
+                    rmd160  cc65cd985c3dd4675d70beb62c8d0dfadb13e91a \
+                    sha256  2da1602e9825b3150e39bf74b3ee78755ea971eef0ce30913eee6b09061557fb \
+                    size    11046695 \
                     ${ddhotkey_hash}.tar.gz \
                     rmd160  12ce0935b45c9b8a1e258f267ff8d18f0429eed0 \
                     sha256  656d090cca863b236b7d319df4a5853b55ebf9af39a31a08cb471122c9bfbf56 \
