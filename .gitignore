@@ -9,3 +9,6 @@ Portfile~
 *.patch~
 
 .DS_Store
+
+# Per-machine Apple signing settings for the local MacPass-devel build.
+/security/MacPass/files/macpass-devel.local.tcl
