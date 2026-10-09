@@ -1,0 +1,5 @@
+# Copy this file to macpass-devel.local.tcl and fill in values from your
+# Apple Development certificate and matching Xcode provisioning profile.
+set macpass_devel_identity "CERTIFICATE_SHA1_FINGERPRINT"
+set macpass_devel_bundle_id "your.registered.bundle.id"
+set macpass_devel_team_id "YOURTEAMID"

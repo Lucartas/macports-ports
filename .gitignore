@@ -11,3 +11,5 @@ Portfile~
 .DS_Store
 
 /CLAUDE.md
+# Per-machine Apple signing settings for the local MacPass-devel build.
+/security/MacPass/files/macpass-devel.local.tcl

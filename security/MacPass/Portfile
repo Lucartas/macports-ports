@@ -8,6 +8,29 @@ github.setup        MacPass MacPass 0.8.2
 # Change github.tarball_from to 'releases' or 'archive' next update
 github.tarball_from tarball
 revision            0
+
+if {${subport} eq ${name}} {
+    conflicts       MacPass-devel
+}
+
+subport MacPass-devel {
+    # Development snapshot from upstream master, including Touch ID unlock.
+    github.setup    MacPass MacPass 402f1d76c688ed244a7a94e87f6fa82bc8ffe781
+    version         20260923.git402f1d7
+    revision        4
+    conflicts       MacPass
+}
+
+set macpass_devel_identity ""
+set macpass_devel_bundle_id com.hicknhacksoftware.MacPass
+set macpass_devel_team_id ""
+if {${subport} eq "MacPass-devel"} {
+    set macpass_devel_local_config [file join ${filespath} macpass-devel.local.tcl]
+    if {[file exists ${macpass_devel_local_config}]} {
+        source ${macpass_devel_local_config}
+    }
+}
+
 categories          security
 license             GPL-3
 maintainers         {i0ntempest @i0ntempest} openmaintainer
@@ -22,14 +45,22 @@ master_sites        ${github.homepage}/archive:macpass \
                     https://github.com/mstarke/DDHotKey/archive:ddhotkey
 set ddhotkey_hash   a996a0a3980de926168df7c2f8b02a1231760561
 
-distfiles           ${version}.tar.gz:macpass \
+distfiles           ${github.version}.tar.gz:macpass \
                     ${ddhotkey_hash}.tar.gz:ddhotkey
 
-checksums           ${version}.tar.gz \
+if {${subport} eq ${name}} {
+    checksums       ${github.version}.tar.gz \
                     rmd160  cc65cd985c3dd4675d70beb62c8d0dfadb13e91a \
                     sha256  2da1602e9825b3150e39bf74b3ee78755ea971eef0ce30913eee6b09061557fb \
-                    size    11046695 \
-                    ${ddhotkey_hash}.tar.gz \
+                    size    11046695
+} else {
+    checksums       ${github.version}.tar.gz \
+                    rmd160  27ef91599b1bcb9a29038d815c43be564ad86dd9 \
+                    sha256  6eca00aeceb411cac4a79fca039b7c5069b36ed0e598c9869b0c52960c80a13f \
+                    size    11064942
+}
+
+checksums-append    ${ddhotkey_hash}.tar.gz \
                     rmd160  12ce0935b45c9b8a1e258f267ff8d18f0429eed0 \
                     sha256  656d090cca863b236b7d319df4a5853b55ebf9af39a31a08cb471122c9bfbf56 \
                     size    27575
@@ -48,9 +79,14 @@ post-extract {
 }
 
 post-patch {
-    copy ${filespath}/get_commit_number.sh ${worksrcpath}
-    reinplace "s|@VERSION@|${version}|g" ${worksrcpath}/get_commit_number.sh
-    set build_number [exec /bin/sh ${worksrcpath}/get_commit_number.sh]0
+    if {${subport} eq ${name}} {
+        copy ${filespath}/get_commit_number.sh ${worksrcpath}
+        reinplace "s|@VERSION@|${version}|g" ${worksrcpath}/get_commit_number.sh
+        set build_number [exec /bin/sh ${worksrcpath}/get_commit_number.sh]0
+    } else {
+        # Source archives have no Git metadata for upstream's build number script.
+        set build_number 202609230
+    }
     reinplace "s|\$\{git_count\}0|${build_number}|" ${worksrcpath}/MacPass.xcodeproj/project.pbxproj
 }
 
@@ -58,9 +94,15 @@ depends_lib             port:KeePassKit \
                         port:HNHUi \
                         port:TransformerKit
 
-patchfiles              patch-xcodeproj.diff \
+if {${subport} eq ${name}} {
+    patchfiles          patch-xcodeproj.diff \
                         patch-remove-sparkle-app.diff \
                         patch-remove-sparkle-pref.diff
+} else {
+    patchfiles          patch-xcodeproj-devel.diff \
+                        patch-remove-sparkle-app.diff \
+                        patch-remove-sparkle-pref-devel.diff
+}
 
 # MPAutotypeDoctor.m:136:29: error: 'CGWindowListCreateImage' is unavailable: obsoleted in macOS 15.0 - Please use ScreenCaptureKit instead.
 if {${os.platform} eq "darwin" && [vercmp ${macosx_deployment_target} >= 15.0]} {
@@ -71,10 +113,30 @@ xcode.target            MacPass
 xcode.scheme            MacPass
 xcode.configuration     Release
 
-xcode.destroot.settings CODE_SIGN_IDENTITY=- \
-                        CODE_SIGN_STYLE=Manual \
-                        ENABLE_HARDENED_RUNTIME=NO \
-                        FRAMEWORK_SEARCH_PATHS=${frameworks_dir}
+if {${subport} eq ${name}} {
+    xcode.destroot.settings CODE_SIGN_IDENTITY=- \
+                            CODE_SIGN_STYLE=Manual \
+                            ENABLE_HARDENED_RUNTIME=NO \
+                            FRAMEWORK_SEARCH_PATHS=${frameworks_dir}
+} else {
+    # Upstream's Keychain access group requires an Apple-authorized signature.
+    # Use a local bundle ID matching the profile when local signing is configured.
+    # MacPorts builds as its separate macports user, which cannot use the
+    # logged-in user's signing identity; sign the installed app at activation.
+    xcode.destroot.settings CODE_SIGNING_ALLOWED=NO \
+                            PRODUCT_BUNDLE_IDENTIFIER=${macpass_devel_bundle_id} \
+                            FRAMEWORK_SEARCH_PATHS=${frameworks_dir}
+    if {${macpass_devel_identity} ne "" && ${macpass_devel_team_id} ne ""} {
+        # Run as root to install the bundle after signing it in the GUI user's session.
+        activate.asroot yes
+        notes "MacPass-devel is signed after activation using local Apple signing settings. Personal Team profiles expire after 7 days; refresh the profile in Xcode and reactivate MacPass-devel."
+        post-activate {
+            system "/bin/sh ${filespath}/macpass-devel-post-activate.sh ${applications_dir}/MacPass.app ${filespath}/macpass-devel-sign-bundle.sh ${macpass_devel_identity} ${macpass_devel_bundle_id} ${macpass_devel_team_id}"
+        }
+    } else {
+        notes "MacPass-devel is built unsigned by default. To enable persistent Touch ID locally, copy files/macpass-devel.local.tcl.example to files/macpass-devel.local.tcl, set values matching your certificate and profile, then reinstall the port."
+    }
+}
 
 # xcode PortGroup sets the DerivedData to /var/root/... which is not writeable. This fixes it.
 destroot.pre_args-append  -derivedDataPath ./DerivedData
