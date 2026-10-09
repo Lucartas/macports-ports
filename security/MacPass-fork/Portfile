@@ -1,0 +1,99 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+PortGroup           xcode 1.0
+PortGroup           github 1.0
+
+github.setup        orestesgaolin MacPass 0.8.13-rc2
+name                MacPass-fork
+github.tarball_from archive
+revision            0
+conflicts           MacPass MacPass-devel
+
+categories          security
+license             GPL-3+
+maintainers         nomaintainer
+description         Maintained MacPass fork with Touch ID and additional KeePass features
+long_description    ${description}. This fork adds passphrase generation, enhanced \
+                    autotype and field references, and optional menu bar operation.
+homepage            https://github.com/orestesgaolin/MacPass
+
+master_sites        ${github.homepage}/archive:macpass \
+                    https://github.com/mstarke/DDHotKey/archive:ddhotkey
+set ddhotkey_hash    a996a0a3980de926168df7c2f8b02a1231760561
+distfiles           ${github.version}.tar.gz:macpass \
+                    ${ddhotkey_hash}.tar.gz:ddhotkey
+
+checksums           ${github.version}.tar.gz \
+                    rmd160  c783cb2977e7a7dd1ff68c866d2189d5b6665304 \
+                    sha256  843bb3f83c82959162fe64bed83cc0dadb6223a22b58f2ee09ba19e5dad803ad \
+                    size    11250529 \
+                    ${ddhotkey_hash}.tar.gz \
+                    rmd160  12ce0935b45c9b8a1e258f267ff8d18f0429eed0 \
+                    sha256  656d090cca863b236b7d319df4a5853b55ebf9af39a31a08cb471122c9bfbf56 \
+                    size    27575
+
+depends_lib         port:KeePassKit-fork \
+                    port:HNHUi \
+                    port:TransformerKit
+
+patchfiles          patch-xcodeproj.diff \
+                    patch-MPAppDelegate.m.diff \
+                    patch-MPUpdatePreferencesController.m.diff
+
+post-extract {
+    file delete -force ${worksrcpath}/DDHotKey
+    move ${workpath}/DDHotKey-${ddhotkey_hash} ${worksrcpath}/DDHotKey
+}
+
+post-patch {
+    # Release archives have no Git metadata for the build-number script.
+    reinplace {s|\${git_count}0|75|} ${worksrcpath}/MacPass.xcodeproj/project.pbxproj
+}
+
+# Match the existing MacPass port's supported build environment.
+if {${os.platform} eq "darwin" && ${os.major} < 20} {
+    known_fail yes
+    pre-fetch {
+        ui_error "${name} requires macOS 11 or greater"
+        return -code error "incompatible macOS version"
+    }
+}
+
+# CGWindowListCreateImage is unavailable when targeting macOS 15 or later.
+if {${os.platform} eq "darwin" && [vercmp ${macosx_deployment_target} >= 15.0]} {
+    macosx_deployment_target 14.0
+}
+
+set macpass_fork_identity ""
+set macpass_fork_bundle_id dev.roszkowski.macpass
+set macpass_fork_team_id ""
+set macpass_fork_local_config [file join ${filespath} macpass-fork.local.tcl]
+if {[file exists ${macpass_fork_local_config}]} {
+    source ${macpass_fork_local_config}
+}
+
+xcode.target        MacPass
+xcode.scheme        MacPass
+xcode.configuration Release
+# Build as the MacPorts user; sign using the desktop user's keychain at activation.
+xcode.destroot.settings CODE_SIGNING_ALLOWED=NO \
+                        CURRENT_PROJECT_VERSION=${version} \
+                        PRODUCT_BUNDLE_IDENTIFIER=${macpass_fork_bundle_id} \
+                        FRAMEWORK_SEARCH_PATHS=${frameworks_dir}
+destroot.pre_args-append -derivedDataPath ./DerivedData
+# MacPorts manages updates rather than the fork's Sparkle feed.
+destroot.args-append GCC_PREPROCESSOR_DEFINITIONS="NO_SPARKLE=TRUE"
+build {}
+
+if {${macpass_fork_identity} ne "" && ${macpass_fork_team_id} ne ""} {
+    activate.asroot yes
+    post-activate {
+        system "/bin/sh ${filespath}/macpass-fork-post-activate.sh ${applications_dir}/MacPass.app ${filespath}/macpass-fork-sign-bundle.sh ${macpass_fork_identity} ${macpass_fork_bundle_id} ${macpass_fork_team_id}"
+    }
+    notes "MacPass-fork is signed after activation using local Apple signing settings. Personal Team profiles expire after 7 days; refresh the profile in Xcode and reactivate MacPass-fork."
+} else {
+    notes "MacPass-fork is built unsigned by default. To configure persistent Touch ID locally, copy files/macpass-fork.local.tcl.example to files/macpass-fork.local.tcl, set values matching your certificate and profile, then reinstall the port."
+}
+
+notes-append "MacPassHTTP is not bundled in this source build; install a compatible plugin separately if needed."

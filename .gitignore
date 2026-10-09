@@ -13,3 +13,6 @@ Portfile~
 /CLAUDE.md
 # Per-machine Apple signing settings for the local MacPass-devel build.
 /security/MacPass/files/macpass-devel.local.tcl
+
+# Per-machine Apple signing settings for the MacPass fork.
+/security/MacPass-fork/files/macpass-fork.local.tcl

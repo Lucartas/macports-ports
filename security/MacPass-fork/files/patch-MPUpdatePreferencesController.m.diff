@@ -1,0 +1,10 @@
+--- MacPass/MPUpdatePreferencesController.m.orig
++++ MacPass/MPUpdatePreferencesController.m
+@@ -25,7 +25,6 @@
+ 
+ #import "NSApplication+MPAdditions.h"
+ 
+-#import <Sparkle/Sparkle.h>
+ 
+ @interface MPUpdatePreferencesController ()
+ @property (weak) IBOutlet NSButton *automaticallyCheckForUpdatesCheckButton;

@@ -1,0 +1,10 @@
+--- MacPass/MPAppDelegate.m.orig
++++ MacPass/MPAppDelegate.m
+@@ -49,7 +49,6 @@
+ 
+ #import "KeePassKit/KeePassKit.h"
+ 
+-#import <Sparkle/Sparkle.h>
+ 
+ NSString *const MPDidChangeStoredKeyFilesSettings = @"com.hicknhack.macpass.MPDidChangeStoredKeyFilesSettings";
+ 
