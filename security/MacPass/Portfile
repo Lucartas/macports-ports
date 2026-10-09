@@ -17,7 +17,7 @@ subport MacPass-devel {
     # Development snapshot from upstream master, including Touch ID unlock.
     github.setup    MacPass MacPass 402f1d76c688ed244a7a94e87f6fa82bc8ffe781
     version         20260923.git402f1d7
-    revision        4
+    revision        3
     conflicts       MacPass
 }
 
