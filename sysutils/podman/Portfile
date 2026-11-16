@@ -6,10 +6,8 @@ PortGroup           golang 1.0
 # After the upgrade, it is highly recommended to test the `podman machine`.
 # This port has problems with this command from time to time.
 # See https://gist.github.com/judaew/85c6e8a62bf0e7f5be5188e020492e21
-#
-# FIXME: Remove the patch and gsed/grep dependencies when updating to >= 6.2.0,
-# see: https://github.com/macports/macports-ports/pull/35244
-go.setup            github.com/containers/podman 6.1.4 v
+# Keep this overlay on Podman 5: Podman 6 no longer supports Intel Macs.
+go.setup            github.com/containers/podman 5.8.8 v
 revision            0
 epoch               0
 
@@ -24,15 +22,12 @@ long_description    \
     inside of a VM on the host, or available via the network. You need to \
     install the remote client and then setup ssh connection information.
 
-# Podman 6.0.0 moved its Go module path to go.podman.io/podman/v6 (source
-# still hosted at github.com/containers/podman); internal imports use the
-# new path, so go.package must match it for GOPATH-mode builds to resolve.
-go.package          go.podman.io/podman/v6
+go.package          github.com/containers/podman/v5
 
 checksums           ${distname}${extract.suffix} \
-                    rmd160  c452ce8cf0015d8ae2c506c9a4812c323224334c \
-                    sha256  200fd9b4b6d820cae24fc99d8e290ec945512365cf3cda8283b3905c0c284ea8 \
-                    size    21017012
+                    rmd160  538c554eeb6bd5c9bccd0419533cf1e3eeec3f43 \
+                    sha256  d0b8dc905a2a767d0d7419e232761a589d66e7a67de2e7d1ce80a8f4e845bcbb \
+                    size    20640031
 
 set py_ver          3.14
 set py_ver_nodot    [string map {. {}} ${py_ver}]
@@ -109,4 +104,4 @@ destroot {
         ${destroot}${prefix}/share/fish/vendor_completions.d/
 }
 
-github.livecheck.regex  {([^"r-]+)}
+github.livecheck.regex  {(5\.[0-9]+\.[0-9]+)}
